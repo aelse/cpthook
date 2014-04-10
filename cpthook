@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import logging
 import re
 
 
@@ -39,6 +40,60 @@ class CptHookConfig(object):
         self.conf = conf
         self.repos = self._normalise(repos)
         self.hooks = hooks
+
+    def _normalise(self, data):
+        """Resolve inherited memberships"""
+
+        tainted = data.keys()
+        round = 0
+        while tainted:
+            round += 1
+            logging.debug('Normalise: round {0}'.format(round))
+
+            did_work = False
+
+            for item in tainted:
+                try:
+                    members = data[item]['members']
+                except KeyError:
+                    logging.debug('Removed empty item {0}'.format(item))
+                    tainted.remove(item)
+                    did_work = True
+                    continue
+
+                unresolved = [x for x in members if x.startswith('@')]
+                if len(unresolved) == 0:
+                    logging.debug('Nothing to resolve in {0}'.format(item))
+                    tainted.remove(item)
+                    did_work = True
+                    continue
+
+                resolved = []
+                dirty = False
+                for member in unresolved:
+                    mem = member.lstrip('@')
+                    try:
+                        new_members = data[mem]['members']
+                    except KeyError:
+                        raise UnknownDependencyException(member)
+                    for new_mem in new_members:
+                        if new_mem.startswith('@'):
+                            # Unresolved membership in upstream group
+                            dirty = True
+                            break
+                    resolved += new_members
+
+                if not dirty:
+                    # No dependencies remain - replace
+                    for member in unresolved:
+                        members.remove(member)
+                    members += resolved
+                    data[item]['members'] = members
+                    did_work = True
+
+            if did_work is False:
+                raise CyclicalDependencyException(','.join(tainted))
+        return data
 
     def _parse_config(self, filename):
         """Parse config file and return global, repo and hook config"""
