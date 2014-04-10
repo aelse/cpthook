@@ -94,7 +94,7 @@ class CptHookConfig(object):
                     resolved += new_members
 
                 if not dirty:
-                    # No dependencies remain - replace
+                    # No dependencies remain - replace resolved groups
                     for member in unresolved:
                         members.remove(member)
                     members += resolved
