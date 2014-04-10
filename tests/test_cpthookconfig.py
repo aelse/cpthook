@@ -1,7 +1,7 @@
 import os.path
 import sys
 import tempfile
-import unittest2 as unittest
+import unittest
 
 from cpthook import CptHookConfig
 import cpthook
