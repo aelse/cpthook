@@ -25,28 +25,65 @@ supported_hooks = [
 ]
 
 
-def parse_config(filename):
-    from ConfigParser import SafeConfigParser
-    parser = SafeConfigParser()
-    parser.read(filename)
+class CyclicalDependencyException(Exception):
+    pass
 
-    # Record the groups as defined in the config
-    repos = {}
-    hooks = {}
+class UnknownDependencyException(Exception):
+    pass
 
-    for section in parser.sections():
-        if section.startswith('repos\s+'):
-            repo_group = re.sub('^repos\s+', '', section)
-            repos[repo_group] = {}
-            try:
-                members = section.get(section, 'members')
-                repos[repo_group]['members'] = members
-            except ConfigParser.NoOptionError:
-                # No members
-                pass
-        elif section.startswith('hooks\s+'):
-            repo_group = re.sub('^repos\s+', '', section)
-            repos[repo_group] = {}
-            pass
-        else:
-            pass
+class CptHookConfig(object):
+
+    def __init__(self, config_file):
+        conf, repos, hooks = self._parse_config(config_file)
+
+        self.conf = conf
+        self.repos = self._normalise(repos)
+        self.hooks = hooks
+
+    def _parse_config(self, filename):
+        """Parse config file and return global, repo and hook config"""
+
+        import ConfigParser
+        parser = ConfigParser.SafeConfigParser()
+        parser.read(filename)
+
+        # Record the groups as defined in the config
+        conf_repos = {}
+        conf_hooks = {}
+        conf = {}
+
+        for section in parser.sections():
+            logging.debug('Evaluating block {0}'.format(section))
+            if section.startswith('repos '):
+                repo_group = re.sub('^repos\s+', '', section)
+                logging.debug('Found repo {0}'.format(repo_group))
+                conf_repos[repo_group] = {}
+                try:
+                    members = parser.get(section, 'members').split()
+                    logging.debug('{0} -> {1}'.format(section, members))
+                    conf_repos[repo_group]['members'] = members
+                except ConfigParser.NoOptionError:
+                    # No members
+                    logging.debug('No members in {0}'.format(section))
+            elif section.startswith('hooks '):
+                hook_group = re.sub('^hooks\s+', '', section)
+                logging.debug('Found hook {0}'.format(hook_group))
+                conf_hooks[hook_group] = {}
+                for type_ in supported_hooks:
+                    try:
+                        vals = parser.get(section, type_).split()
+                        conf_hooks[hook_group][type_] = vals
+                    except ConfigParser.NoOptionError:
+                        # No hooks of that type
+                        pass
+            elif section == 'cpthook':
+                try:
+                    sp = parser.get(section, 'search-path').split()
+                    conf['search-path'] = sp
+                except ConfigParser.NoOptionError:
+                    # No defined repository search path
+                    pass
+            else:
+                raise Exception('Unknown config element {0}'.format(section))
+
+        return conf, conf_repos, conf_hooks
