@@ -33,6 +33,9 @@ class CyclicalDependencyException(Exception):
 class UnknownDependencyException(Exception):
     pass
 
+class UnknownConfigElementException(Exception):
+    pass
+
 class CptHookConfig(object):
 
     def __init__(self, config_file):
@@ -143,6 +146,7 @@ class CptHookConfig(object):
                     # No defined repository search path
                     pass
             else:
-                raise Exception('Unknown config element {0}'.format(section))
+                raise UnknownConfigElementException(
+                    'Unknown config element {0}'.format(section))
 
         return conf, conf_repos, conf_hooks
