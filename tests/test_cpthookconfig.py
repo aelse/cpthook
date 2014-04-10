@@ -26,3 +26,9 @@ class UnitTests(unittest.TestCase):
 
     def test_empty_repo_block(self):
         h = CptHookConfig(cfgfile())
+
+    def test_cyclical_dependency(self):
+        config = cfgfile()
+        def f():
+            h = CptHookConfig(config)
+        self.assertRaises(cpthook.CyclicalDependencyException, f)
