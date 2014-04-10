@@ -30,11 +30,14 @@ supported_hooks = [
 class CyclicalDependencyException(Exception):
     pass
 
+
 class UnknownDependencyException(Exception):
     pass
 
+
 class UnknownConfigElementException(Exception):
     pass
+
 
 class CptHookConfig(object):
 
