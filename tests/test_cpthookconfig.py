@@ -32,3 +32,7 @@ class UnitTests(unittest.TestCase):
         def f():
             h = CptHookConfig(config)
         self.assertRaises(cpthook.CyclicalDependencyException, f)
+
+    def test_inheritance(self):
+        h = CptHookConfig(cfgfile())
+        self.assertTrue('something' in h.repo_groups['test2']['members'])
