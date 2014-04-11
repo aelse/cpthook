@@ -67,10 +67,10 @@ class CptHookConfig(object):
 
         data = self.repo_groups
         tainted = data.keys()
-        round = 0
+        round_ = 0
         while tainted:
-            round += 1
-            logging.debug('Normalise: round {0}'.format(round))
+            round_ += 1
+            logging.debug('Normalise {0}: round {1}'.format(option, round_))
 
             did_work = False
 
