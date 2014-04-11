@@ -18,6 +18,9 @@ def parse_options():
     parser.add_option("-d", "--debug", dest="debug", default=False,
                       action="store_true",
                       help="log debug information")
+    parser.add_option("--dry-run", dest="dryrun", default=False,
+                      action="store_true",
+                      help="perform a dry run, making no changes")
     parser.add_option("--init", dest="init", default=False,
                       action="store_true",
                       help="install configured hooks and repositories")
