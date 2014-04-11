@@ -14,7 +14,9 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+.. automodule:: cpthook
 
+.. autoclass:: CptHookConfig
 
 Indices and tables
 ==================
