@@ -89,4 +89,5 @@ if __name__ == '__main__':
         logging.info('Running {0} hooks'.format(opts.hook))
         run_hook(opts.hook, config, opts, hook_args)
     else:
-        logging.warn('No command given. Use --help for assistance')
+        logging.debug('No command given.')
+        print 'Use --help for assistance'
