@@ -55,3 +55,8 @@ class UnitTests(unittest.TestCase):
         h = CptHookConfig(cfgfile())
         hooks = h.hooks_for_repo('doesnotexist')
         self.assertEqual(hooks, {})
+
+    def test_parse_complete_valid_config(self):
+        """Should return CptHookConfig object for valid config"""
+        h = CptHookConfig(cfgfile('complete-valid.cfg'))
+        self.assertIsInstance(h, CptHookConfig)
