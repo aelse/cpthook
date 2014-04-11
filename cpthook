@@ -169,6 +169,31 @@ class CptHookConfig(object):
 
         return conf, conf_repos, conf_hooks
 
+    def _aggregate_hooks(self, hook_groups):
+        if not hasattr(hook_groups, '__iter__'):
+            # Check for __iter__ attribute rather than iter(),
+            # which also captures strings.
+            raise ValueError('hook_groups must be iterable')
+
+        hooks = {}
+        logging.debug('Aggregating hooks for hook groups {0}'.format(
+            hook_groups))
+        for hook_group in hook_groups:
+            logging.debug('Evaluating hook group {0}'.format(hook_group))
+            try:
+                hg = self.hook_groups[hook_group]
+                logging.debug('hg {0} -> {1}'.format(hook_group, hg))
+            except KeyError:
+                raise NoSuchHookGroupException(hook_group)
+            for hook_type, hook_list in hg.items():
+                if hook_type not in hooks:
+                    hooks[hook_type] = hook_list
+                else:
+                    for hook in hook_list:
+                        if hook not in hooks[hook_type]:
+                            hooks[hook_type].append(hook)
+        return hooks
+
     def repo_group_membership(self, repo):
         """Returns list of repo group membership for repo"""
 
