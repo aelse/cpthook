@@ -181,4 +181,5 @@ class CptHookConfig(object):
             if repo in group_members:
                 if repo not in membership:
                     membership.append(repo_group)
+        logging.debug('{0} is a member of {1}'.format(repo, membership))
         return membership
