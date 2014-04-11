@@ -7,14 +7,15 @@ from cpthook import CptHookConfig
 import cpthook
 
 
-def cfgfile():
+def cfgfile(filename=None):
     """Return name of config file corresponding with calling function name"""
-    fun_name = sys._getframe(1).f_code.co_name
+    if filename is None:
+        filename = sys._getframe(1).f_code.co_name + '.cfg'
     return '/'.join((
         os.path.dirname(os.path.realpath(__name__)),
         'tests',
         'configs',
-        fun_name + '.cfg'))
+        filename))
 
 
 class UnitTests(unittest.TestCase):
@@ -48,3 +49,9 @@ class UnitTests(unittest.TestCase):
     def test_inheritance(self):
         h = CptHookConfig(cfgfile())
         self.assertTrue('something' in h.repo_groups['test2']['members'])
+
+    def test_empty_hooks_for_repo(self):
+        """An empty dict of hooks is returned for unknown repo"""
+        h = CptHookConfig(cfgfile('complete-valid.cfg'))
+        hooks = h.hooks_for_repo('doesnotexist')
+        self.assertEqual(hooks, {})
