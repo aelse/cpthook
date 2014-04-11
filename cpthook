@@ -183,3 +183,22 @@ class CptHookConfig(object):
                     membership.append(repo_group)
         logging.debug('{0} is a member of {1}'.format(repo, membership))
         return membership
+
+    def repo_group_hook_groups(self, repo):
+        """Returns list of repo group membership for repo"""
+
+        # 1. Get repo group membership for repo
+        repo_groups = self.repo_group_membership(repo)
+
+        # 2. Combine lists of hook groups from repo groups
+        membership = []
+        for repo_group in repo_groups:
+            try:
+                hook_groups = self.repo_groups[repo_group]['hooks']
+            except KeyError:
+                logging.debug('No hook groups in {0}'.format(repo_group))
+                continue
+            for hook_group in hook_groups:
+                if hook_group not in membership:
+                    membership.append(hook_group)
+        return membership
