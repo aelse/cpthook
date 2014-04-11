@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 
+import inspect
 import git
 import logging
 import os.path
+import subprocess
 import sys
 
 import cpthook
@@ -66,12 +68,37 @@ def install_hooks(config, opts):
 
 def run_hook(hook, config, opts, args):
     try:
-        repo = git.Repo('.')
+        gitrepo = git.Repo('.')
     except git.errors.InvalidGitRepositoryError:
         print '{0} is not a git repo?'.format(
             os.path.realpath(os.path.curdir))
         sys.exit(-1)
-    pass
+    # Work out the repository name from the current directory
+    repo = os.path.basename(os.path.realpath(os.path.curdir))
+    # Determine script path to be in cpthook directory.
+    # Work out where that is through some introspection
+    script_path = '/'.join((os.path.dirname(
+        os.path.abspath(inspect.getfile(inspect.currentframe()))),
+        'hooks.d', hook))
+    # TODO: make script path a config option
+    #script_path = '/'.join(opts.hooksd, hook)
+    hooks = config.hooks_for_repo(repo)
+    logging.info('{0}'.format(hooks))
+    if hook in hooks:
+        logging.info('Found {0} hooks'.format(hook))
+        for script in hooks[hook]:
+            logging.info('Running {0} hook {1}'.format(hook, script))
+            if opts.dryrun:
+                logging.info('Dry-run: skipping script {0}'.format(
+                    script))
+                continue
+            logging.debug('Calling script {0}'.format(script))
+            ret = subprocess.call(['/'.join((script_path, script))] + args)
+            if ret != 0:
+                logging.info(
+                    'Received non-zero return code from {0}'.format(script))
+                sys.exit(ret)
+    sys.exit(0)
 
 
 if __name__ == '__main__':
