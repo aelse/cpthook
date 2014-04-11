@@ -56,12 +56,16 @@ class CptHookConfig(object):
         conf, repo_groups, hook_groups = self._parse_config(config_file)
 
         self.conf = conf
-        self.repo_groups = self._normalise(repo_groups)
-        self.hook_groups = self._normalise(hook_groups)
+        self.repo_groups = repo_groups
+        self.hook_groups = hook_groups
 
-    def _normalise(self, data):
+        self._normalise_repo_groups('members')
+        self._normalise_repo_groups('hooks')
+
+    def _normalise_repo_groups(self, option):
         """Resolve inherited memberships"""
 
+        data = self.repo_groups
         tainted = data.keys()
         round = 0
         while tainted:
@@ -72,7 +76,7 @@ class CptHookConfig(object):
 
             for item in tainted:
                 try:
-                    members = data[item]['members']
+                    members = data[item][option]
                 except KeyError:
                     logging.debug('Removed empty item {0}'.format(item))
                     tainted.remove(item)
@@ -91,7 +95,7 @@ class CptHookConfig(object):
                 for member in unresolved:
                     mem = member.lstrip('@')
                     try:
-                        new_members = data[mem]['members']
+                        new_members = data[mem][option]
                     except KeyError:
                         raise UnknownDependencyException(member)
                     for new_mem in new_members:
@@ -106,12 +110,12 @@ class CptHookConfig(object):
                     for member in unresolved:
                         members.remove(member)
                     members += resolved
-                    data[item]['members'] = members
+                    data[item][option] = members
                     did_work = True
 
             if did_work is False:
                 raise CyclicalDependencyException(','.join(tainted))
-        return data
+        self.repo_groups = data
 
     def _parse_config(self, filename):
         """Parse config file and return global, repo and hook config"""
