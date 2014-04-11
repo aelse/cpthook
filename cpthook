@@ -161,3 +161,17 @@ class CptHookConfig(object):
                     'Unknown config element {0}'.format(section))
 
         return conf, conf_repos, conf_hooks
+
+    def repo_group_membership(self, repo):
+        """Returns list of repo group membership for repo"""
+
+        membership = []
+        for repo_group, data in self.repo_groups.items():
+            try:
+                group_members = data['members']
+            except KeyError:
+                continue
+            if repo in group_members:
+                if repo not in membership:
+                    membership.append(repo_group)
+        return membership
