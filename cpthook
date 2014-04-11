@@ -39,6 +39,14 @@ class UnknownConfigElementException(Exception):
     pass
 
 
+class NoSuchRepoGroupException(Exception):
+    pass
+
+
+class NoSuchHookGroupException(Exception):
+    pass
+
+
 class CptHookConfig(object):
 
     def __init__(self, config_file):
