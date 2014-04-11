@@ -39,6 +39,10 @@ def validate_options(opts):
         print 'Cannot install to repos and be invoked as a hook'
         sys.exit(-1)
 
+    if opts.hook is not None and opts.hook not in cpthook.supported_hooks:
+        print 'Unsupported hook "{0}"'.format(opts.hook)
+        sys.exit(-1)
+
 
 def handle_options():
     opts, args = parse_options()
