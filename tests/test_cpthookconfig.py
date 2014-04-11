@@ -52,6 +52,6 @@ class UnitTests(unittest.TestCase):
 
     def test_empty_hooks_for_repo(self):
         """An empty dict of hooks is returned for unknown repo"""
-        h = CptHookConfig(cfgfile('complete-valid.cfg'))
+        h = CptHookConfig(cfgfile())
         hooks = h.hooks_for_repo('doesnotexist')
         self.assertEqual(hooks, {})
