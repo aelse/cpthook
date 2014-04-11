@@ -226,7 +226,7 @@ class CptHookConfig(object):
             for hook_group in hook_groups:
                 if hook_group not in membership:
                     membership.append(hook_group)
-        if not len(hook_groups):
+        if not len(membership):
             logging.debug('No hook groups for {0}'.format(repo))
         return membership
 
