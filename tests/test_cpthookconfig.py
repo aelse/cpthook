@@ -56,6 +56,13 @@ class UnitTests(unittest.TestCase):
         hooks = h.hooks_for_repo('doesnotexist')
         self.assertEqual(hooks, {})
 
+    def test_populated_hooks_for_repo(self):
+        """Should retrieve list of hooks for a given repo"""
+        h = CptHookConfig(cfgfile())
+        hooks = h.hooks_for_repo('repo1')
+        print hooks
+        self.assertEqual(hooks, {'pre-receive': ['pre-receive.sh']})
+
     def test_parse_complete_valid_config(self):
         """Should return CptHookConfig object for valid config"""
         h = CptHookConfig(cfgfile('complete-valid.cfg'))
