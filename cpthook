@@ -59,9 +59,27 @@ def handle_options():
     return opts, args
 
 
+def install_hooks(config, opts):
+    pass
+
+
+def run_hook(hook, config, opts, args):
+    pass
+
+
 if __name__ == '__main__':
     # Any positional args returned by optparse are intended for
     # the hook script to be invoked.
     opts, hook_args = handle_options()
     config = cpthook.CptHookConfig(opts.config_file)
 
+    if opts.init:
+        # Install cpthook wrapper to configured repositories
+        logging.info('Installing cpthook wrapper to repositories')
+        install_hooks(config)
+    elif opts.hook:
+        # Run requested hook on repository
+        logging.info('Running {0} hooks'.format(opts.hook))
+        run_hook(opts.hook, config, opts, hook_args)
+    else:
+        logging.warn('No command given. Use --help for assistance')
