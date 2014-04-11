@@ -63,5 +63,5 @@ if __name__ == '__main__':
     # Any positional args returned by optparse are intended for
     # the hook script to be invoked.
     opts, hook_args = handle_options()
+    config = cpthook.CptHookConfig(opts.config_file)
 
-    config = cpthook.CptHookConfig(opts.config)
