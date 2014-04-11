@@ -15,8 +15,7 @@ Contents:
    :maxdepth: 2
 
 .. automodule:: cpthook
-
-.. autoclass:: CptHookConfig
+    :members:
 
 Indices and tables
 ==================
