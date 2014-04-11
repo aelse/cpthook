@@ -60,7 +60,6 @@ class UnitTests(unittest.TestCase):
         """Should retrieve list of hooks for a given repo"""
         h = CptHookConfig(cfgfile())
         hooks = h.hooks_for_repo('repo1')
-        print hooks
         self.assertEqual(hooks, {'pre-receive': ['pre-receive.sh']})
 
     def test_parse_complete_valid_config(self):
