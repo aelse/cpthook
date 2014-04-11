@@ -1,0 +1,41 @@
+#!/usr/bin/env python
+
+import logging
+import os.path
+import sys
+
+import cpthook
+
+
+def parse_options():
+    import optparse
+    parser = optparse.OptionParser()
+    parser.add_option("-c", "--config", dest="config_file", metavar="FILE",
+                      default="hook.cfg", help="cpthook config file")
+    parser.add_option("-v", "--verbose", dest="verbose", default=False,
+                      action="store_true",
+                      help="log verbose status information")
+    parser.add_option("-d", "--debug", dest="debug", default=False,
+                      action="store_true",
+                      help="log debug information")
+    options, args = parser.parse_args()
+    return options
+
+def validate_options(opts):
+    if not os.path.isfile(opts.config_file):
+        print 'No config file "{0}"'.format(opts.config_file)
+        sys.exit(-1)
+
+
+if __name__ == '__main__':
+    opts = parse_options()
+
+    if opts.debug:
+        log_level = logging.DEBUG
+    elif opts.verbose:
+        log_level = logging.INFO
+    else:
+        log_level = logging.WARN
+    logging.getLogger().setLevel(log_level)
+
+    validate_options(opts)
