@@ -28,26 +28,32 @@ supported_hooks = [
 
 
 class CyclicalDependencyException(Exception):
+    """Unresolvable group dependency encountered"""
     pass
 
 
 class UnknownDependencyException(Exception):
+    """Unknown group dependency encountered"""
     pass
 
 
 class UnknownConfigElementException(Exception):
+    """Unexpected configuration element encountered"""
     pass
 
 
 class NoSuchRepoGroupException(Exception):
+    """Repository group does not exist"""
     pass
 
 
 class NoSuchHookGroupException(Exception):
+    """Hook group does not exist"""
     pass
 
 
 class CptHookConfig(object):
+    """An object representing a cpthook configuration"""
 
     def __init__(self, config_file):
         if not os.path.isfile(config_file):
