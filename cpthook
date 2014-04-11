@@ -57,7 +57,7 @@ class CptHookConfig(object):
 
         self.conf = conf
         self.repo_groups = self._normalise(repo_groups)
-        self.hook_groups = hook_groups
+        self.hook_groups = self._normalise(hook_groups)
 
     def _normalise(self, data):
         """Resolve inherited memberships"""
