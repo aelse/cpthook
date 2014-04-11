@@ -18,8 +18,14 @@ def parse_options():
     parser.add_option("-d", "--debug", dest="debug", default=False,
                       action="store_true",
                       help="log debug information")
+    parser.add_option("--init", dest="init", default=False,
+                      action="store_true",
+                      help="install configured hooks and repositories")
+    parser.add_option("--hook", dest="hook", default=None,
+                      help="the hook to run against the current repository")
     options, args = parser.parse_args()
-    return options
+    return options, args
+
 
 def validate_options(opts):
     if not os.path.isfile(opts.config_file):
@@ -27,8 +33,9 @@ def validate_options(opts):
         sys.exit(-1)
 
 
-if __name__ == '__main__':
-    opts = parse_options()
+def handle_options():
+    opts, args = parse_options()
+    validate_options(opts)
 
     if opts.debug:
         log_level = logging.DEBUG
@@ -38,4 +45,11 @@ if __name__ == '__main__':
         log_level = logging.WARN
     logging.getLogger().setLevel(log_level)
 
-    validate_options(opts)
+    return opts, args
+
+if __name__ == '__main__':
+    # Any positional args returned by optparse are intended for
+    # the hook script to be invoked.
+    opts, hook_args = handle_options()
+
+    config = cpthook.CptHookConfig(opts.config)
