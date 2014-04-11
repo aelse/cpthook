@@ -229,3 +229,14 @@ class CptHookConfig(object):
         if not len(hook_groups):
             logging.debug('No hook groups for {0}'.format(repo))
         return membership
+
+    def hooks_for_repo(self, repo):
+        """Returns dict of hooks to be applied to a repository"""
+
+        # 1. Get hook group membership for repo
+        hook_groups = self.repo_group_hook_groups(repo)
+
+        # 2. Build dict of hooks from those hook groups
+        hooks = self._aggregate_hooks(hook_groups)
+
+        return hooks
