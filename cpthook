@@ -47,6 +47,7 @@ def handle_options():
 
     return opts, args
 
+
 if __name__ == '__main__':
     # Any positional args returned by optparse are intended for
     # the hook script to be invoked.
