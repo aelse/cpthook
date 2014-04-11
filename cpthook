@@ -131,13 +131,16 @@ class CptHookConfig(object):
                 repo_group = re.sub('^repos\s+', '', section)
                 logging.debug('Found repo {0}'.format(repo_group))
                 conf_repos[repo_group] = {}
-                try:
-                    members = parser.get(section, 'members').split()
-                    logging.debug('{0} -> {1}'.format(section, members))
-                    conf_repos[repo_group]['members'] = members
-                except ConfigParser.NoOptionError:
-                    # No members
-                    logging.debug('No members in {0}'.format(section))
+                for option in ['members', 'hooks']:
+                    try:
+                        values = parser.get(section, option).split()
+                        logging.debug('{0} -> {1} -> {2}'.format(
+                            section, option, values))
+                        conf_repos[repo_group][option] = values
+                    except ConfigParser.NoOptionError:
+                        # No members
+                        logging.debug('No {0} in {1}'.format(
+                            option, section))
             elif section.startswith('hooks '):
                 hook_group = re.sub('^hooks\s+', '', section)
                 logging.debug('Found hook {0}'.format(hook_group))
