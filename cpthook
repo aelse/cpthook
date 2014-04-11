@@ -35,6 +35,10 @@ def validate_options(opts):
         print 'No config file "{0}"'.format(opts.config_file)
         sys.exit(-1)
 
+    if opts.init and opts.hook:
+        print 'Cannot install to repos and be invoked as a hook'
+        sys.exit(-1)
+
 
 def handle_options():
     opts, args = parse_options()
