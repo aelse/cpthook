@@ -353,12 +353,26 @@ class CptHook(object):
 
 
     def _locate_repo(self, repo):
+        """Find repository location for a given repository name"""
+
+        # Locate by matching 4 common naming cases
+        # 1. path/repo
+        # 2. path/repo/.git
+        # 3. path/repo.git
+        # 4. path/repo.git/.git
+
         search_paths = self.config.global_config['repo-path']
         for path in search_paths:
             path_ = os.path.join(path, repo)
             if os.path.exists(os.path.join(path_, 'hooks')):
                 return path_
             path_ = os.path.join(path, repo, '.git')
+            if os.path.exists(os.path.join(path_, 'hooks')):
+                return path_
+            path_ = os.path.join(path, repo + '.git')
+            if os.path.exists(os.path.join(path_, 'hooks')):
+                return path_
+            path_ = os.path.join(path, repo + '.git', '.git')
             if os.path.exists(os.path.join(path_, 'hooks')):
                 return path_
         return None
