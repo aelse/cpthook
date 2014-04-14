@@ -61,14 +61,25 @@ class CptHookConfig(object):
         if not os.path.isfile(config_file):
             raise IOError('No such file {0}'.format(config_file))
 
-        conf, repo_groups, hook_groups = self._parse_config(config_file)
+        global_config, repo_groups, hook_groups = self._parse_config(config_file)
 
-        self.conf = conf
+        self.global_config = global_config
         self.repo_groups = repo_groups
         self.hook_groups = hook_groups
 
         self._normalise_repo_groups('members')
         self._normalise_repo_groups('hooks')
+        self._set_missing_globals()
+
+    def _set_missing_globals(self):
+        """Set global configuration for all repositories
+
+        Performed in case global settings are not configured in the
+        cpthook configuration block in the config file"""
+
+        if 'script-path' not in self.global_config:
+            # Default location of hooks.d to config directory
+            self.global_config['script-path'] = os.path.dirname(__file__)
 
     def _normalise_repo_groups(self, option):
         """Resolve inherited memberships"""
