@@ -405,7 +405,8 @@ class CptHook(object):
         return script_file
 
     def run_hook(self, hook, args):
-        ret = subprocess.call(['git', 'rev-parse'])
+        with open('/dev/null', 'wb') as devnull:
+            ret = subprocess.call(['git', 'rev-parse'], stderr=devnull)
         if ret != 0:
             logging.warn('{0} is not a git repo?'.format(
                 os.path.realpath(os.path.curdir)))
