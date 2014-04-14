@@ -279,7 +279,10 @@ class CptHookConfig(object):
 
         rg = self.repo_groups
         members_by_group = map(lambda x: x['members'], rg.values())
-        members = reduce(lambda x, y: set(x + y), members_by_group)
+        try:
+            members = reduce(lambda x, y: set(x + y), members_by_group)
+        except TypeError:
+            members = []
         return list(members)
 
 
