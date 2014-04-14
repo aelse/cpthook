@@ -246,3 +246,11 @@ class CptHookConfig(object):
         hooks = self._aggregate_hooks(hook_groups)
 
         return hooks
+
+    def repos(self):
+        """Returns list of known repos"""
+
+        rg = self.repo_groups
+        members_by_group = map(lambda x: x['members'], rg.values())
+        members = reduce(lambda x, y: set(x + y), members_by_group)
+        return list(members)
