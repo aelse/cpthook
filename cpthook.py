@@ -84,6 +84,11 @@ class CptHookConfig(object):
             self.global_config['script-path'] = os.path.join(
                 os.path.dirname(self.config_file), 'hooks.d')
 
+        if 'repo-path' not in self.global_config:
+            # Default location of hooks.d to config directory
+            self.global_config['repo-path'] = [os.path.normpath(
+                os.path.join('..', os.path.dirname(self.config_file)))]
+
     def _normalise_repo_groups(self, option):
         """Resolve inherited memberships"""
 
@@ -182,6 +187,12 @@ class CptHookConfig(object):
                 try:
                     sp = parser.get(section, 'script-path').split()
                     conf['script-path'] = sp[0]
+                except ConfigParser.NoOptionError:
+                    # No defined repository search path
+                    pass
+                try:
+                    rp = parser.get(section, 'repo-path').split()
+                    conf['repo-path'] = rp
                 except ConfigParser.NoOptionError:
                     # No defined repository search path
                     pass
