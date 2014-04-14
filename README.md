@@ -13,6 +13,18 @@ A cpthook configuration file uses the python `ConfigParser` syntax.
 
     [cpthook]
     # Contains global configuration elements.
+
+    # The hooks.d directory pointed to by script-path contains directories
+    # named by hook type  eg. post-commit, update.
+    # Hook scripts go into those directories.
+    # A single script-path is supported.
+    script-path = /path/to/hooks.d
+
+    # One or more paths to locations where git repos may be found
+    # eg. if repo-path = /tmp then repository 'foo' may be found
+    # in /tmp/foo or perhaps /tmp/foo.git
+    # Multiple paths may be specified.
+    repo-path = /path/to/git/repos /more/git/repos
     
     # A cpthook config file contains repos and hooks.
     # repos define managed repositories
