@@ -21,7 +21,7 @@ def parse_options():
     parser.add_option("-d", "--debug", dest="debug", default=False,
                       action="store_true",
                       help="log debug information")
-    parser.add_option("--dry-run", dest="dryrun", default=False,
+    parser.add_option("--dry-run", dest="dry_run", default=False,
                       action="store_true",
                       help="perform a dry run, making no changes")
     parser.add_option("--init", dest="init", default=False,
@@ -88,7 +88,7 @@ def run_hook(hook, config, opts, args):
         logging.info('Found {0} hooks'.format(hook))
         for script in hooks[hook]:
             logging.info('Running {0} hook {1}'.format(hook, script))
-            if opts.dryrun:
+            if opts.dry_run:
                 logging.info('Dry-run: skipping script {0}'.format(
                     script))
                 continue
