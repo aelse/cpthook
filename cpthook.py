@@ -398,6 +398,66 @@ class CptHook(object):
             hooks = self.config.hooks_for_repo(repo).keys()
             self.add_hooks_to_repo(repo_path, hooks)
 
+    def remove_unmanaged_hooks(self):
+        """Remove cpthook wrapper hooks from repos below repo-path
+
+        Removes scripts for git repos found immediately below a
+        directory listed in the global repo-path"""
+
+        repos = []
+        for path in self.config.global_config['repo-path']:
+            dirs = os.listdir(path)
+            for dir_ in dirs:
+                p = os.path.realpath(os.path.join(path, dir_))
+                if p not in repos:
+                    if self._is_git_repo(p):
+                        repos.append(p)
+
+        # repos is a list of git repositories. Find which contain
+        # cpthook wrappers but are unmanaged according to config
+        for repo in repos:
+            path = None
+            if os.path.isdir(os.path.join(repo, 'hooks')):
+                path = os.path.join(repo, 'hooks')
+            elif os.path.isdir(os.path.join(repo, '.git', 'hooks')):
+                path = os.path.join(repo, '.git', 'hooks')
+            if path is None:
+                logging.debug('No hooks directory found in {0}'.format(
+                    repo))
+            hook_files = os.listdir(path)
+
+            # Filter out all files but the supported hooks
+            hook_files = [h for h in hook_files if h in supported_hooks]
+
+            if len(hook_files) == 0:
+                # No hooks in repo, skip it
+                continue
+
+            repo_name = os.path.basename(path)
+            known_hooks = self.config.hooks_for_repo(repo_name)
+
+            for file_ in hook_files:
+                if file_ not in known_hooks:
+                    f_p = os.path.join(path, file_)
+                    try:
+                        is_wrapper = self._is_cpthook_wrapper(f_p)
+                    except:
+                        logging.warn(('Could not determine if {0} '
+                            'is a wrapper'.format(f_p)))
+                        continue
+                    if is_wrapper:
+                        if self.dry_run:
+                            logging.info(('Dry run. Skipping removal '
+                                'of unmanaged wrapper {0}'.format(f_p)))
+                            continue
+                        try:
+                            os.path.remove(f_p)
+                        except:
+                            logging.warn('Could not remove {0}'.format(f_p))
+                        logging.info('Removed unmanaged wrapper {0}'.format(f_p))
+                    else:
+                        logging.debug('Not cpthook wrapper: {0}'.format(f_p))
+
     def _abs_script_name(self, hook, script):
         hooksd_path = self.config.global_config['script-path']
         script_file = os.path.join(hooksd_path, hook, script)
@@ -405,6 +465,8 @@ class CptHook(object):
         return script_file
 
     def _is_git_repo(self, path):
+        if not os.path.isdir(path):
+            return False
         orig_dir = os.getcwd()
         try:
             os.chdir(path)
