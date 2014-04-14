@@ -62,10 +62,10 @@ class CptHookConfig(object):
         if not os.path.isfile(config_file):
             raise IOError('No such file {0}'.format(config_file))
 
-        global_config, repo_groups, hook_groups = self._parse_config(config_file)
+        g_conf, repo_groups, hook_groups = self._parse_config(config_file)
 
         self.config_file = config_file
-        self.global_config = global_config
+        self.global_config = g_conf
         self.repo_groups = repo_groups
         self.hook_groups = hook_groups
 
@@ -290,11 +290,9 @@ class CptHook(object):
         self.config = CptHookConfig(config_file)
         self.dry_run = False
 
-
     def _script_name(self):
         file_ = inspect.getfile(inspect.currentframe())
         return os.path.abspath(os.path.realpath(file_))
-
 
     def add_hooks_to_repo(self, repo_path, hooks):
         template = (
@@ -323,9 +321,10 @@ class CptHook(object):
                         continue
                     header = f.read(100)
                     if header.find('cpthook-wrapper') == -1:
-                        logging.warn('{0} hook {1} is not managed by cpthook. '
-                                     'Refusing to overwrite'.format(
-                                         os.path.basename(repo_path), hook_type))
+                        msg = ('{0} hook {1} is not managed by cpthook. '
+                               'Refusing to overwrite'.format(
+                                   os.path.basename(repo_path), hook_type))
+                        logging.warn(msg)
                         continue
                 else:
                     logging.info('{0} exists but is not a file'.format(target))
@@ -350,7 +349,6 @@ class CptHook(object):
                     os.path.basename(repo_path), hook_type))
             except:
                 logging.warn('Failed to create wrapper {0}'.format(target))
-
 
     def _locate_repo(self, repo):
         """Find repository location for a given repository name"""
@@ -377,7 +375,6 @@ class CptHook(object):
                 return path_
         return None
 
-
     def install_hooks(self):
         for repo in self.config.repos():
             logging.debug('Examining repo {0}'.format(repo))
@@ -388,13 +385,11 @@ class CptHook(object):
             hooks = self.config.hooks_for_repo(repo).keys()
             self.add_hooks_to_repo(repo_path, hooks)
 
-
     def _abs_script_name(self, hook, script):
         hooksd_path = self.config.global_config['script-path']
         script_file = os.path.join(hooksd_path, hook, script)
         logging.debug('Script path {0}'.format(script_file))
         return script_file
-
 
     def run_hook(self, hook, args):
         ret = subprocess.call(['git', 'rev-parse'])
@@ -420,7 +415,8 @@ class CptHook(object):
                 logging.info('Running {0} hook {1}'.format(hook, script))
                 ret = subprocess.call([script_file] + args)
                 if ret != 0:
-                    logging.info(
-                        'Received non-zero return code from {0}'.format(script))
+                    msg = 'Received non-zero return code from {0}'.format(
+                          script)
+                    logging.info(msg)
                     return ret
         return 0
