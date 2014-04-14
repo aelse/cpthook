@@ -499,6 +499,7 @@ class CptHook(object):
                 if not os.path.exists(script_file):
                     logging.info('{0} hook {1} does not exist'.format(
                         hook, script))
+                    continue
                 if self.dry_run:
                     logging.info('Dry-run: skipping {0} script {1}'.format(
                         repo, script))
