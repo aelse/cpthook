@@ -294,8 +294,8 @@ class CptHook(object):
         self.dry_run = False
 
     def _script_name(self):
-        file_ = inspect.getfile(inspect.currentframe())
-        return os.path.abspath(os.path.realpath(file_))
+        import __main__ as main
+        return os.path.abspath(os.path.realpath(main.__file__))
 
     def _is_cpthook_wrapper(self, file_):
         """Return True if file is a cpthook wrapper script, False if not.
