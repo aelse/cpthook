@@ -294,7 +294,7 @@ class CptHook(object):
         file_ = inspect.getfile(inspect.currentframe())
         return os.path.abspath(os.path.realpath(file_))
 
-    def _is_cpthook_wrapper(file_):
+    def _is_cpthook_wrapper(self, file_):
         """Return True if file is a cpthook wrapper script, False if not.
 
         Exceptions will fall through to calling method"""
