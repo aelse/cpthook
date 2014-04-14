@@ -294,6 +294,20 @@ class CptHook(object):
         file_ = inspect.getfile(inspect.currentframe())
         return os.path.abspath(os.path.realpath(file_))
 
+    def _is_cpthook_wrapper(file_):
+        """Return True if file is a cpthook wrapper script, False if not.
+
+        Exceptions will fall through to calling method"""
+
+        f = open(file_, 'r')
+        header = f.read(100)
+        f.close()
+
+        if header.find('cpthook-wrapper') == -1:
+            return False
+        else:
+            return True
+
     def add_hooks_to_repo(self, repo_path, hooks):
         template = (
             "#!/bin/sh\n"
@@ -315,12 +329,11 @@ class CptHook(object):
             if os.path.exists(target):
                 if os.path.isfile(target):
                     try:
-                        f = open(target, 'r')
+                        is_wrapper = self._is_cpthook_wrapper(target)
                     except:
                         logging.info('Could not read {0}'.format(target))
                         continue
-                    header = f.read(100)
-                    if header.find('cpthook-wrapper') == -1:
+                    if not is_wrapper:
                         msg = ('{0} hook {1} is not managed by cpthook. '
                                'Refusing to overwrite'.format(
                                    os.path.basename(repo_path), hook_type))
