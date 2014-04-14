@@ -436,8 +436,8 @@ class CptHook(object):
                 # No hooks in repo, skip it
                 continue
 
-            repo_name = os.path.basename(path)
-            known_hooks = self.config.hooks_for_repo(repo_name)
+            repo_name = os.path.basename(repo).rstrip('.git')
+            known_hooks = self.config.hooks_for_repo(repo_name).keys()
 
             for file_ in hook_files:
                 if file_ not in known_hooks:
