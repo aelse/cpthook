@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import inspect
-import git
 import logging
 import os
 import os.path
@@ -142,9 +141,8 @@ def install_hooks(config, opts):
 
 
 def run_hook(hook, config, opts, args):
-    try:
-        gitrepo = git.Repo('.')
-    except git.errors.InvalidGitRepositoryError:
+    ret = subprocess.call(['git', 'rev-parse'])
+    if ret != 0:
         print '{0} is not a git repo?'.format(
             os.path.realpath(os.path.curdir))
         sys.exit(-1)
