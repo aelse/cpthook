@@ -490,6 +490,7 @@ class CptHook(object):
             return -1
         # Work out the repository name from the current directory
         repo = os.path.basename(os.path.realpath(os.path.curdir))
+        repo = repo.rstrip('.git')
 
         hooks = self.config.hooks_for_repo(repo)
         if hook in hooks:
