@@ -396,7 +396,7 @@ class CptHook(object):
             logging.debug('Examining repo {0}'.format(repo))
             repo_path = self._locate_repo(repo)
             if repo_path is None:
-                logging.info('Could not locate repo {0}'.format(repo))
+                logging.warn('Could not locate repo {0}'.format(repo))
                 continue
             hooks = self.config.hooks_for_repo(repo).keys()
             self.add_hooks_to_repo(repo_path, hooks)
