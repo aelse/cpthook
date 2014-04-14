@@ -451,7 +451,7 @@ class CptHook(object):
                                 'of unmanaged wrapper {0}'.format(f_p)))
                             continue
                         try:
-                            os.path.remove(f_p)
+                            os.remove(f_p)
                         except:
                             logging.warn('Could not remove {0}'.format(f_p))
                         logging.info('Removed unmanaged wrapper {0}'.format(f_p))
