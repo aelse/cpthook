@@ -4,7 +4,6 @@ import inspect
 import logging
 import os
 import os.path
-import subprocess
 import sys
 
 import cpthook
@@ -62,118 +61,6 @@ def handle_options():
     return opts, args
 
 
-def script_name():
-    return os.path.abspath(os.path.realpath(__file__))
-
-
-def add_hooks_to_repo(repo_path, hooks, config_file, dry_run=False):
-    template = (
-        "#!/bin/sh\n"
-        "#\n"
-        "# MAGIC STRING: cpthook-wrapper (do not remove)\n"
-        "{0} --config={1} --hook={2}\n"
-    )
-
-    hook_path = '/'.join((repo_path, 'hooks'))
-    if not os.path.isdir(hook_path):
-        logging.warn('Hook path {0} is not a directory'.format(hook_path))
-        return
-
-    cpthook = script_name()
-
-    for hook_type in hooks:
-        target = '/'.join((repo_path, 'hooks', hook_type))
-        if os.path.exists(target):
-            if os.path.isfile(target):
-                try:
-                    f = open(target, 'r')
-                except:
-                    logging.info('Could not read {0}'.format(target))
-                    continue
-                header = f.read(100)
-                if header.find('cpthook-wrapper') == -1:
-                    logging.warn('{0} hook {1} is not managed by cpthook. '
-                                 'Refusing to overwrite'.format(
-                                     os.path.basename(repo_path), hook_type))
-                    continue
-            else:
-                logging.info('{0} exists but is not a file'.format(target))
-                continue
-
-        if dry_run:
-            logging.info('Dry run. Skipping write to {0}'.format(target))
-            continue
-
-        try:
-            wrapper = open(target, 'w')
-        except:
-            logging.warn('Could not write wrapper {0}'.format(target))
-            continue
-
-        try:
-            wrapper_script = template.format(cpthook, config_file, hook_type)
-            wrapper.write(wrapper_script)
-            wrapper.close()
-            os.chmod(target, 0755)
-            logging.debug('Wrote {0} hook {1}'.format(
-                os.path.basename(repo_path), hook_type))
-        except:
-            logging.warn('Failed to create wrapper {0}'.format(target))
-
-
-def locate_repo(repo):
-    return './{0}'.format(repo)
-
-
-def install_hooks(config, opts):
-    config_file = os.path.realpath(opts.config_file)
-
-    for repo in config.repos():
-        logging.debug('Examining repo {0}'.format(repo))
-        repo_path = locate_repo(repo)
-        if repo is None:
-            logging.info('Could not locate repo {0}'.format(repo))
-            continue
-        hooks = config.hooks_for_repo(repo).keys()
-        add_hooks_to_repo(repo_path, hooks, config_file, dry_run=opts.dry_run)
-
-    pass
-
-
-def run_hook(hook, config, opts, args):
-    ret = subprocess.call(['git', 'rev-parse'])
-    if ret != 0:
-        print '{0} is not a git repo?'.format(
-            os.path.realpath(os.path.curdir))
-        sys.exit(-1)
-    # Work out the repository name from the current directory
-    repo = os.path.basename(os.path.realpath(os.path.curdir))
-    # Determine script path to be in cpthook directory.
-    # Work out where that is through some introspection
-    script_path = '/'.join((os.path.dirname(
-        os.path.abspath(inspect.getfile(inspect.currentframe()))),
-        'hooks.d', hook))
-    # TODO: make script path a config option
-    #script_path = '/'.join(opts.hooksd, hook)
-    hooks = config.hooks_for_repo(repo)
-    logging.info('{0}'.format(hooks))
-    if hook in hooks:
-        logging.info('Found {0} hooks'.format(hook))
-        for script in hooks[hook]:
-            logging.info('Running {0} hook {1}'.format(hook, script))
-            if opts.dry_run:
-                logging.info('Dry-run: skipping script {0}'.format(
-                    script))
-                continue
-            logging.debug('Calling script {0}'.format(script))
-            ret = subprocess.call(['/'.join((script_path, script))] + args)
-            if ret != 0:
-                logging.info(
-                    'Received non-zero return code from {0}'.format(script))
-                sys.exit(ret)
-    sys.exit(0)
-
-
 if __name__ == '__main__':
     # Any positional args returned by optparse are intended for
     # the hook script to be invoked.
@@ -193,14 +80,19 @@ if __name__ == '__main__':
         # potential for damage.
         sys.exit(-1)
 
+    cpt = cpthook.CptHook(opts.config_file)
+    if opts.dry_run:
+        cpt.dry_run = True
+
     if opts.init:
         # Install cpthook wrapper to configured repositories
         logging.info('Installing cpthook wrapper to repositories')
-        install_hooks(config, opts)
+        cpt.install_hooks()
     elif opts.hook:
         # Run requested hook on repository
         logging.info('Running {0} hooks'.format(opts.hook))
-        run_hook(opts.hook, config, opts, hook_args)
+        ret = cpt.run_hook(opts.hook, hook_args)
+        sys.exit(ret)
     else:
         logging.debug('No command given.')
         print 'Use --help for assistance'
