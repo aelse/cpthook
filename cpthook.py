@@ -505,6 +505,7 @@ class CptHook(object):
                         repo, script))
                     continue
                 logging.info('Running {0} hook {1}'.format(hook, script))
+                logging.debug([script_file] + args)
                 ret = subprocess.call([script_file] + args)
                 if ret != 0:
                     msg = 'Received non-zero return code from {0}'.format(
