@@ -404,10 +404,22 @@ class CptHook(object):
         logging.debug('Script path {0}'.format(script_file))
         return script_file
 
-    def run_hook(self, hook, args):
+    def _is_git_repo(self, path):
+        orig_dir = os.getcwd()
+        try:
+            os.chdir(path)
+        except OSError:
+            return False
         with open('/dev/null', 'wb') as devnull:
             ret = subprocess.call(['git', 'rev-parse'], stderr=devnull)
+        os.chdir(orig_dir)
         if ret != 0:
+            return False
+        else:
+            return True
+
+    def run_hook(self, hook, args):
+        if not self._is_git_repo(os.path.curdir):
             logging.warn('{0} is not a git repo?'.format(
                 os.path.realpath(os.path.curdir)))
             return -1
