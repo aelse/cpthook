@@ -316,7 +316,7 @@ class CptHook(object):
             "#!/bin/sh\n"
             "#\n"
             "# MAGIC STRING: cpthook-wrapper (do not remove)\n"
-            "{0} --config={1} --hook={2}\n"
+            "{0} --config={1} --hook={2} $*\n"
         )
 
         config_file = os.path.realpath(self.config_file)
