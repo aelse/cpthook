@@ -105,7 +105,20 @@ if __name__ == '__main__':
     # Any positional args returned by optparse are intended for
     # the hook script to be invoked.
     opts, hook_args = handle_options()
-    config = cpthook.CptHookConfig(opts.config_file)
+
+    try:
+        config = cpthook.CptHookConfig(opts.config_file)
+    except Exception, e:
+        print 'Invalid cpthook config file {0}: {1}'.format(
+            opts.config_file, str(e))
+        # Exiting with a non-zero code has the potential to disrupt
+        # legitimate activity to a repository if we are called as
+        # a hook and the configuration file is broken. However, we
+        # may also do damage by not running hook scripts that need
+        # to run for repositories. It is therefore safest to exit
+        # with a non-zero code as while inconvenient this has least
+        # potential for damage.
+        sys.exit(-1)
 
     if opts.init:
         # Install cpthook wrapper to configured repositories
