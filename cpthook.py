@@ -359,6 +359,12 @@ class CptHook(object):
             self.add_hooks_to_repo(repo_path, hooks)
 
 
+    def _abs_script_name(self, hook, script):
+        hooksd_path = self.config.global_config['script-path']
+        logging.debug('Script path {0}'.format(script_file))
+        return os.path.join(hooksd_path, hook, script)
+
+
     def run_hook(self, hook, args):
         ret = subprocess.call(['git', 'rev-parse'])
         if ret != 0:
@@ -367,22 +373,21 @@ class CptHook(object):
             return -1
         # Work out the repository name from the current directory
         repo = os.path.basename(os.path.realpath(os.path.curdir))
-        # Determine script path to be in cpthook directory.
-        # Work out where that is through some introspection
-        script_path = os.path.join(os.path.dirname(self._script_name()),
-            'hooks.d', hook)
-        # TODO: make script path a config option
-        # script_path = '/'.join(opts.hooksd, hook)
+
         hooks = self.config.hooks_for_repo(repo)
         if hook in hooks:
             logging.info('Found {0} hooks'.format(hook))
             for script in hooks[hook]:
+                script_file = self._abs_script_name(hook, script)
+                if not os.path.exists(script_file):
+                    logging.info('{0} hook {1} does not exist'.format(
+                        hook, script))
                 if self.dry_run:
-                    logging.info('Dry-run: skipping script {0}'.format(
-                        script))
+                    logging.info('Dry-run: skipping {0} script {1}'.format(
+                        repo, script))
                     continue
                 logging.info('Running {0} hook {1}'.format(hook, script))
-                ret = subprocess.call([os.path.join(script_path, script)] + args)
+                ret = subprocess.call([script_file] + args)
                 if ret != 0:
                     logging.info(
                         'Received non-zero return code from {0}'.format(script))
