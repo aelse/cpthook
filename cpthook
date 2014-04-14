@@ -86,6 +86,7 @@ if __name__ == '__main__':
         # Install cpthook wrapper to configured repositories
         logging.info('Installing cpthook wrapper to repositories')
         cpt.install_hooks()
+        cpt.remove_unmanaged_hooks()
     elif opts.hook:
         # Run requested hook on repository
         logging.info('Running {0} hooks'.format(opts.hook))
