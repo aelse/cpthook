@@ -362,8 +362,9 @@ class CptHook(object):
 
     def _abs_script_name(self, hook, script):
         hooksd_path = self.config.global_config['script-path']
+        script_file = os.path.join(hooksd_path, hook, script)
         logging.debug('Script path {0}'.format(script_file))
-        return os.path.join(hooksd_path, hook, script)
+        return script_file
 
 
     def run_hook(self, hook, args):
