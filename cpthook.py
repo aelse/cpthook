@@ -2,6 +2,7 @@
 
 import inspect
 import logging
+import os
 import os.path
 import re
 import subprocess
