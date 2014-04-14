@@ -361,7 +361,7 @@ class CptHook(object):
                 f.write(wrapper)
                 f.close()
                 os.chmod(target, 0755)
-                logging.debug('Wrote {0} hook {1}'.format(
+                logging.info('Wrote {0} hook {1}'.format(
                     os.path.basename(repo_path), hook_type))
             except:
                 logging.warn('Failed to create wrapper {0}'.format(target))
