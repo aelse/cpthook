@@ -280,7 +280,7 @@ class CptHook(object):
         )
 
         config_file = os.path.realpath(self.config_file)
-        hook_path = '/'.join((repo_path, 'hooks'))
+        hook_path = os.path.join(repo_path, 'hooks')
         if not os.path.isdir(hook_path):
             logging.warn('Hook path {0} is not a directory'.format(hook_path))
             return
@@ -288,7 +288,7 @@ class CptHook(object):
         cpthook = self._script_name()
 
         for hook_type in hooks:
-            target = '/'.join((repo_path, 'hooks', hook_type))
+            target = os.path.join(repo_path, 'hooks', hook_type)
             if os.path.exists(target):
                 if os.path.isfile(target):
                     try:
@@ -328,9 +328,9 @@ class CptHook(object):
 
 
     def _locate_repo(self, repo):
-        if os.path.exists('/'.join((repo, 'hooks'))):
+        if os.path.exists(os.path.join(repo, 'hooks')):
             return repo
-        if os.path.exists('/'.join((repo, '.git', 'hooks'))):
+        if os.path.exists(os.path.join(repo, '.git', 'hooks')):
             return '{0}/.git'
         return None
 
@@ -356,8 +356,8 @@ class CptHook(object):
         repo = os.path.basename(os.path.realpath(os.path.curdir))
         # Determine script path to be in cpthook directory.
         # Work out where that is through some introspection
-        script_path = '/'.join((os.path.dirname(self._script_name()),
-            'hooks.d', hook))
+        script_path = os.path.join(os.path.dirname(self._script_name()),
+            'hooks.d', hook)
         # TODO: make script path a config option
         # script_path = '/'.join(opts.hooksd, hook)
         hooks = self.config.hooks_for_repo(repo)
@@ -369,7 +369,7 @@ class CptHook(object):
                         script))
                     continue
                 logging.info('Running {0} hook {1}'.format(hook, script))
-                ret = subprocess.call(['/'.join((script_path, script))] + args)
+                ret = subprocess.call([os.path.join(script_path, script)] + args)
                 if ret != 0:
                     logging.info(
                         'Received non-zero return code from {0}'.format(script))
