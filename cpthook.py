@@ -353,10 +353,14 @@ class CptHook(object):
 
 
     def _locate_repo(self, repo):
-        if os.path.exists(os.path.join(repo, 'hooks')):
-            return repo
-        if os.path.exists(os.path.join(repo, '.git', 'hooks')):
-            return '{0}/.git'
+        search_paths = self.config.global_config['repo-path']
+        for path in search_paths:
+            path_ = os.path.join(path, repo)
+            if os.path.exists(os.path.join(path_, 'hooks')):
+                return path_
+            path_ = os.path.join(path, repo, '.git')
+            if os.path.exists(os.path.join(path_, 'hooks')):
+                return path_
         return None
 
 
