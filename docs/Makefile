@@ -49,7 +49,7 @@ help:
 clean:
 	rm -rf $(BUILDDIR)/*
 
-html: README.rst
+html:
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
@@ -175,6 +175,3 @@ pseudoxml:
 	$(SPHINXBUILD) -b pseudoxml $(ALLSPHINXOPTS) $(BUILDDIR)/pseudoxml
 	@echo
 	@echo "Build finished. The pseudo-XML files are in $(BUILDDIR)/pseudoxml."
-
-README.rst: ../README.md
-	pandoc -r markdown -w rst -o $@ $<

@@ -21,6 +21,9 @@ def parse_options():
     parser.add_option("--dry-run", dest="dry_run", default=False,
                       action="store_true",
                       help="perform a dry run, making no changes")
+    parser.add_option("--validate", dest="validate", default=False,
+                      action="store_true",
+                      help="validate a config file, then exit")
     parser.add_option("--init", dest="init", default=False,
                       action="store_true",
                       help="install configured hooks and repositories")
@@ -66,7 +69,14 @@ if __name__ == '__main__':
 
     try:
         config = cpthook.CptHookConfig(opts.config_file)
+
+        if opts.validate:
+            # Config was valid, exit code 0
+            sys.exit(0)
     except Exception, e:
+        if opts.validate:
+            # Silently exit with code 1
+            sys.exit(1)
         print 'Invalid cpthook config file {0}: {1}'.format(
             opts.config_file, str(e))
         # Exiting with a non-zero code has the potential to disrupt

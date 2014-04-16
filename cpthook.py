@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import inspect
 import logging
 import os
 import os.path
@@ -278,9 +277,9 @@ class CptHookConfig(object):
         """Returns list of known repos"""
 
         rg = self.repo_groups
-        members_by_group = map(lambda x: x['members'], rg.values())
+        members_ = map(lambda x: x['members'], rg.values())
         try:
-            members = reduce(lambda x, y: set(x + y), members_by_group)
+            members = reduce(lambda x, y: list(set(x + y)), members_)
         except TypeError:
             members = []
         return list(members)
@@ -363,6 +362,7 @@ class CptHook(object):
                 os.chmod(target, 0755)
                 logging.info('Wrote {0} hook {1}'.format(
                     os.path.basename(repo_path), hook_type))
+                logging.debug('Created wrapper {0}'.format(target))
             except:
                 logging.warn('Failed to create wrapper {0}'.format(target))
 
@@ -446,18 +446,20 @@ class CptHook(object):
                         is_wrapper = self._is_cpthook_wrapper(f_p)
                     except:
                         logging.warn(('Could not determine if {0} '
-                            'is a wrapper'.format(f_p)))
+                                      'is a wrapper'.format(f_p)))
                         continue
                     if is_wrapper:
                         if self.dry_run:
                             logging.info(('Dry run. Skipping removal '
-                                'of unmanaged wrapper {0}'.format(f_p)))
+                                          'of unmanaged wrapper '
+                                          '{0}'.format(f_p)))
                             continue
                         try:
                             os.remove(f_p)
                         except:
                             logging.warn('Could not remove {0}'.format(f_p))
-                        logging.info('Removed unmanaged wrapper {0}'.format(f_p))
+                        logging.info('Removed unmanaged wrapper '
+                                     '{0}'.format(f_p))
                     else:
                         logging.debug('Not cpthook wrapper: {0}'.format(f_p))
 
