@@ -446,18 +446,20 @@ class CptHook(object):
                         is_wrapper = self._is_cpthook_wrapper(f_p)
                     except:
                         logging.warn(('Could not determine if {0} '
-                            'is a wrapper'.format(f_p)))
+                                      'is a wrapper'.format(f_p)))
                         continue
                     if is_wrapper:
                         if self.dry_run:
                             logging.info(('Dry run. Skipping removal '
-                                'of unmanaged wrapper {0}'.format(f_p)))
+                                          'of unmanaged wrapper '
+                                          '{0}'.format(f_p)))
                             continue
                         try:
                             os.remove(f_p)
                         except:
                             logging.warn('Could not remove {0}'.format(f_p))
-                        logging.info('Removed unmanaged wrapper {0}'.format(f_p))
+                        logging.info('Removed unmanaged wrapper '
+                                     '{0}'.format(f_p))
                     else:
                         logging.debug('Not cpthook wrapper: {0}'.format(f_p))
 
