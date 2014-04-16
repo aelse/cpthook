@@ -278,9 +278,9 @@ class CptHookConfig(object):
         """Returns list of known repos"""
 
         rg = self.repo_groups
-        members_by_group = map(lambda x: x['members'], rg.values())
+        members_ = map(lambda x: x['members'], rg.values())
         try:
-            members = reduce(lambda x, y: set(x + y), members_by_group)
+            members = reduce(lambda x, y: list(set(x + y)), members_)
         except TypeError:
             members = []
         return list(members)
