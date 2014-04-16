@@ -11,7 +11,7 @@ setup(
     install_requires=[],
 
     description='Centrally manage hooks for git repositories',
-    long_description=open(os.path.join(__dir__, 'README.md')).read(),
+    long_description=open(os.path.join(__dir__, 'README.rst')).read(),
 
     author='Alexander Else',
     author_email='aelse@else.id.au',
