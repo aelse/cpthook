@@ -6,7 +6,7 @@
 cpthook
 =======
 
-.. include:: README.rst
+.. include:: ../README.rst
     :start-line: 3
 
 Contents:
