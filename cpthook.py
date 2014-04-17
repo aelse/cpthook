@@ -503,6 +503,10 @@ class CptHook(object):
                     logging.info('{0} hook {1} does not exist'.format(
                         hook, script))
                     continue
+                if not os.access(script_file, os.X_OK):
+                    logging.info('{0} hook {1} is not executable'.format(
+                        hook, script))
+                    continue
                 if self.dry_run:
                     logging.info('Dry-run: skipping {0} script {1}'.format(
                         repo, script))
