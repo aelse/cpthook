@@ -164,6 +164,9 @@ class CptHookConfig(object):
                 for option in ['members', 'hooks']:
                     try:
                         values = parser.get(section, option).split()
+                        # Record repo names without a .git suffix
+                        if option == 'members':
+                            values = [x.rstrip('.git') for x in values]
                         logging.debug('{0} -> {1} -> {2}'.format(
                             section, option, values))
                         conf_repos[repo_group][option] = values
