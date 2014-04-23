@@ -5,6 +5,7 @@ import os
 import os.path
 import re
 import subprocess
+import sys
 
 
 # Supported hooks - see
@@ -529,6 +530,9 @@ class CptHook(object):
         repo = os.path.basename(os.path.realpath(os.path.curdir))
         repo = repo.rstrip('.git')
 
+        # Read stdin into a buffer to be replayed to each hook script.
+        stdin = sys.stdin.read()
+
         hooks = self.config.hooks_for_repo(repo)
         if hook in hooks:
             logging.info('Found {0} hooks'.format(hook))
@@ -548,7 +552,12 @@ class CptHook(object):
                     continue
                 logging.info('Running {0} hook {1}'.format(hook, script))
                 logging.debug([script_file] + args)
-                ret = subprocess.call([script_file] + args)
+                p = subprocess.Popen([script_file] + args,
+                                     stdin=subprocess.PIPE)
+                p.stdin.write(stdin)
+                p.stdin.close()
+                ret = p.wait()
+
                 if ret != 0:
                     msg = 'Received non-zero return code from {0}'.format(
                           script)
