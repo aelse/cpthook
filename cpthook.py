@@ -1,4 +1,12 @@
 #!/usr/bin/env python
+#
+# This file is part of the cpthook library.
+#
+# cpthook is free software released under the BSD License.
+# Please see the LICENSE file included in this distribution for
+# terms of use. This LICENSE is also available at
+# https://github.com/aelse/cpthook/blob/master/LICENSE
+
 
 import logging
 import os
