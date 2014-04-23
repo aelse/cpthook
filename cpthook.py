@@ -5,6 +5,7 @@ import os
 import os.path
 import re
 import subprocess
+import sys
 
 
 # Supported hooks - see
@@ -164,6 +165,9 @@ class CptHookConfig(object):
                 for option in ['members', 'hooks']:
                     try:
                         values = parser.get(section, option).split()
+                        # Record repo names without a .git suffix
+                        if option == 'members':
+                            values = [x.rstrip('.git') for x in values]
                         logging.debug('{0} -> {1} -> {2}'.format(
                             section, option, values))
                         conf_repos[repo_group][option] = values
@@ -288,11 +292,27 @@ class CptHookConfig(object):
 class CptHook(object):
 
     def __init__(self, config_file):
+    """A git hook execution layer
+
+    CptHook provides a mechanism for running multiple hook scripts
+    for a particular hook type (eg. post-commit) for configured
+    repositories.
+
+    This class manages repository hooks, installing a wrapper that
+    executes the cpthook program to run each of the hook scripts
+    configured to be run for a hook type in a repository.
+
+    Configuration is managed through an ini-style file
+    (see CptHookConfig)"""
+
+    def __init__(self, config_file):
+        """Called with the filename of a cpthook configuration file"""
         self.config_file = config_file
         self.config = CptHookConfig(config_file)
         self.dry_run = False
 
     def _script_name(self):
+        """Returns path and filename of executing python program"""
         import __main__ as main
         return os.path.abspath(os.path.realpath(main.__file__))
 
@@ -311,6 +331,10 @@ class CptHook(object):
             return True
 
     def add_hooks_to_repo(self, repo_path, hooks):
+        """Called with a path to a repository and a list of hooks
+
+        Creates a bash wrapper to run cpthook when git runs each hook"""
+
         template = (
             "#!/bin/sh\n"
             "#\n"
@@ -392,6 +416,8 @@ class CptHook(object):
         return None
 
     def install_hooks(self):
+        """Installs configured hooks into managed repositories"""
+
         for repo in self.config.repos():
             logging.debug('Examining repo {0}'.format(repo))
             repo_path = self._locate_repo(repo)
@@ -486,6 +512,18 @@ class CptHook(object):
             return True
 
     def run_hook(self, hook, args):
+        """Runs a given hook type (eg. post-commit)
+
+        Expects execution within the git repository (as git does).
+        Attempts to run each script of the given hook type that
+        is enabled for the current repository.
+
+        Execution halts when all scripts are run or earlier if
+        a hook script terminated with a non-zero exit code.
+
+        Returns 0, or the non-zero exit code from the script that
+        terminated with that exit code."""
+
         if not self._is_git_repo(os.path.curdir):
             logging.warn('{0} is not a git repo?'.format(
                 os.path.realpath(os.path.curdir)))
@@ -493,6 +531,9 @@ class CptHook(object):
         # Work out the repository name from the current directory
         repo = os.path.basename(os.path.realpath(os.path.curdir))
         repo = repo.rstrip('.git')
+
+        # Read stdin into a buffer to be replayed to each hook script.
+        stdin = sys.stdin.read()
 
         hooks = self.config.hooks_for_repo(repo)
         if hook in hooks:
@@ -503,13 +544,22 @@ class CptHook(object):
                     logging.info('{0} hook {1} does not exist'.format(
                         hook, script))
                     continue
+                if not os.access(script_file, os.X_OK):
+                    logging.info('{0} hook {1} is not executable'.format(
+                        hook, script))
+                    continue
                 if self.dry_run:
                     logging.info('Dry-run: skipping {0} script {1}'.format(
                         repo, script))
                     continue
                 logging.info('Running {0} hook {1}'.format(hook, script))
                 logging.debug([script_file] + args)
-                ret = subprocess.call([script_file] + args)
+                p = subprocess.Popen([script_file] + args,
+                                     stdin=subprocess.PIPE)
+                p.stdin.write(stdin)
+                p.stdin.close()
+                ret = p.wait()
+
                 if ret != 0:
                     msg = 'Received non-zero return code from {0}'.format(
                           script)
