@@ -7,7 +7,7 @@
 
 from setuptools import setup
 
-__long_desc__="""If you use a central repository manager such as gitolite
+__long_desc__ = """If you use a central repository manager such as gitolite
 or gitosis you probably have at least a few repositories using custom git
 hooks.
 
