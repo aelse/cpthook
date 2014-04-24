@@ -6,8 +6,17 @@
 # https://github.com/aelse/cpthook/blob/master/LICENSE
 
 from setuptools import setup
-import os.path
-__dir__ = os.path.dirname(os.path.abspath(__file__))
+
+__long_desc__="""If you use a central repository manager such as gitolite
+or gitosis you probably have at least a few repositories using custom git
+hooks.
+
+Managing the hooks in all your repositories by hand, is time consuming
+and prone to error. If you need to take advantage of the functionality
+provided by more than one hook script you are left to do it yourself.
+
+cpthook allows you to run more than one hook in each repo and manage
+them all in one location."""
 
 setup(
     name='cpthook',
@@ -18,7 +27,7 @@ setup(
     install_requires=[],
 
     description='Centrally manage hooks for git repositories',
-    long_description=open(os.path.join(__dir__, 'README.rst')).read(),
+    long_description=__long_desc__,
 
     author='Alexander Else',
     author_email='aelse@else.id.au',
