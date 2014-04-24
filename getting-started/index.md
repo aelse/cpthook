@@ -32,7 +32,7 @@ $ python setup.py install
 
 ## Running cpthook
 
-Check that cpthook is working by run it with the --help flag.
+Check that cpthook is working by running it with the --help flag.
 
 {% highlight bash %}
 $ cpthook --help
