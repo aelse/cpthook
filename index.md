@@ -8,10 +8,10 @@ cpthook is a git hook manager.
 
 ## About
 
-If you use a central repository manager such as gitolite or gitosis you
+If you use a central repository manager like gitolite you
 probably have at least a few repositories using custom git hooks.
 
-Managing the hooks in all your repositories by hand, is time consuming
+Managing the hooks in all your repositories by hand is time consuming
 and prone to error. If you need to take advantage of the functionality
 provided by more than one hook script you are left to do it yourself.
 
