@@ -4,49 +4,69 @@
 /*
 /*****************************************************************************/
 
-/* Global Reset */
 * {
   margin: 0;
   padding: 0;
 }
 
-html, body { height: 100%; }
-
-body {
-  background-color: #FFF;
-  font: 13.34px Helvetica, Arial, sans-serif;
-  font-size: small;
-  text-align: center;
+html, body {
+  height: 100%;
+  width: 100%;
+  -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-size: 100%; }
+body {
+  color: #333;
+  background-color: #fafbfc;
+  font-family: 'Raleway', Arial, sans-serif;
+  font-weight: 400;
+  font-size: 0.85em;
+  overflow: hidden;
+}
 
-h1 { margin-bottom: 1em; }
-p { margin: 1em 0; }
+a {
+  color: #8085C1;
+  text-decoration: none;
+  border: none;
+}
 
-a         { color: #00a; }
-a:hover   { color: #000; }
-a:visited { color: #a0a; }
+a img {
+  outline: none;
+}
+
+a:hover {
+  color: #555;
+  border: none;
+}
+
+.separator {
+  color: #555;
+}
 
 /*****************************************************************************/
 /*
 /* Home
 /*
 /*****************************************************************************/
-.posts {
+#logo {
+  max-width: 128px;
+}
+
+.posts a {
+  color: #444;
+}
+
+.posts a:hover {
+  color: #777;
+}
+
+.posts-list {
   list-style-type: none;
-  margin-bottom: 2em;
 }
 
-.posts li {
+.posts-list li {
+  text-align: center;
   line-height: 1.75em;
-}
-
-.posts span {
-  color: #aaa;
-  font-family: Monaco, "Courier New", monospace;
-  font-size: 80%;
 }
 
 /*****************************************************************************/
@@ -56,69 +76,40 @@ a:visited { color: #a0a; }
 /*****************************************************************************/
 
 .site {
-  font-size: 115%;
-  text-align: justify;
-  width: 42em;
-  margin: 3em auto 2em;
-  line-height: 1.5em;
-}
-
-.header a {
-  font-weight: bold;
-  text-decoration: none;
+  height: 100%;
+  width: 100%;
+  line-height: 1.25em;
 }
 
 .title {
   display: inline-block;
-  margin-bottom: 2em;
+  text-align: center;
 }
 
-.title a {
-  color: #a00;
+.tagline {
+  width: 100%;
+  color: #777;
+  text-align: center;
+  margin-top: 0.5em;
+  display: block;
+
 }
 
-.title a:hover {
-  color: #000;
-}
-
-.header a.extra {
-  color: #aaa;
-  margin-left: 1em;
-}
-
-.header a.extra:hover {
-  color: #000;
-}
-
-.meta {
-  color: #aaa;
+.posts {
+  border-top: 1px solid #e7e7e7;
+  margin-top: 1em;
+  padding-top: 1.5em;
+  padding-bottom: 1.25em;
 }
 
 .footer {
-  font-size: 80%;
-  color: #666;
-  border-top: 4px solid #eee;
-  margin-top: 2em;
+  font-size: 0.95em;
+  border-top: 1px solid #e7e7e7;
+  padding-top: 1.25em;
+  padding-bottom: 1.5em;
   overflow: hidden;
-}
-
-.footer .contact {
-  float: left;
-  margin-right: 3em;
-}
-
-.footer .contact a {
-  color: #8085C1;
-}
-
-.footer .rss {
-  margin-top: 1.1em;
-  margin-right: -.2em;
-  float: right;
-}
-
-.footer .rss img {
-  border: 0;
+  float: center;
+  text-align: center;
 }
 
 /*****************************************************************************/
@@ -127,6 +118,48 @@ a:visited { color: #a0a; }
 /*
 /*****************************************************************************/
 
+#date {
+  padding-top: 0.5em;
+  margin-bottom: 2em;
+}
+
+#cover-photo-container,
+#info-container {
+  display: block;
+}
+
+#info-container {
+  margin-top: 3em;
+}
+
+#title {
+  color: #494949;
+  margin-bottom: 0.35em;
+  font-size: 3.5em;
+  text-transform: uppercase;
+}
+
+.post {
+  line-height: 24px;
+  max-width: 725px;
+  clear: both;
+}
+
+.post h2 {
+  margin-top: 1.25em;
+  margin-left: -0.5em;
+  margin-bottom: 1.25em;
+}
+
+.post a,
+#about a {
+  border-bottom: 1px dashed #8085C1;
+}
+
+.post a:hover {
+  border: none;
+}
+
 /* standard */
 .post pre {
   border: 1px solid #ddd;
@@ -134,8 +167,16 @@ a:visited { color: #a0a; }
   padding: 0 .4em;
 }
 
+.post p {
+  font-family: 'Source Sans Pro', Arial, sans-serif;
+  font-size: 1.1em;
+  margin-bottom: 1.45em;
+  text-align: justify;
+}
+
 .post ul, .post ol {
-  margin-left: 1.35em;
+  margin-left: 2.35em;
+  margin-bottom: 1.25em;
 }
 
 .post code {
@@ -157,4 +198,88 @@ a:visited { color: #a0a; }
 
 .post pre.terminal code {
   background-color: #333;
+}
+
+/*****************************************************************************/
+/*
+/* Sidebar and Content
+/*
+/*****************************************************************************/
+
+.sidebar,
+.content {
+  vertical-align: top;
+  height: 100%;
+  -webkit-overflow-scrolling: touch;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.sidebar {
+  float: left;
+  width: 14%;
+  padding-left: 11em;
+  padding-right: 2.125em;
+  border-right: 1px solid #e7e7e7;
+}
+
+.content {
+  padding-left: 2.125em;
+}
+
+.header {
+  text-align: center;
+  padding-top: 2.5em;
+  font-size: 1.1em;
+}
+
+.post-link {
+  margin-bottom: 0.75em;
+}
+
+.post-title {
+  font-weight: 600;
+  font-size: 1.4em;
+  text-transform: uppercase;
+}
+
+.post-date {
+  color: #8a8a8a;
+  font-family: Monaco, "Courier New", monospace;
+  font-weight: 600;
+  font-size: 0.65em;
+  display: block;
+  text-transform: lowercase;
+}
+
+#sidebar-button {
+  height: intrinsic;
+  cursor: pointer;
+  display: none;
+  padding: 15px 5px 0px 0px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #e7e7e7;
+}
+
+#sidebar-button:active,
+#sidebar-button:hover {
+  opacity: 0.7;
+}
+
+/*****************************************************************************/
+/*
+/* Colophon
+/*
+/*****************************************************************************/
+
+.colophon {
+  margin-top: 1.5em;
+  margin-bottom: 1.45em;
+  border-top: 1px dotted #e7e7e7;
+}
+
+.colophon p {
+  margin-top: 1.25em;
+  font-size: 0.95em;
+  color: #777;
 }
