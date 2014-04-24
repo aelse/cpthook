@@ -300,21 +300,18 @@ class CptHookConfig(object):
 class CptHook(object):
 
     def __init__(self, config_file):
-    """A git hook execution layer
+        """A git hook execution layer
 
-    CptHook provides a mechanism for running multiple hook scripts
-    for a particular hook type (eg. post-commit) for configured
-    repositories.
+        CptHook provides a mechanism for running multiple hook scripts
+        for a particular hook type (eg. post-commit) for configured
+        repositories.
 
-    This class manages repository hooks, installing a wrapper that
-    executes the cpthook program to run each of the hook scripts
-    configured to be run for a hook type in a repository.
+        This class manages repository hooks, installing a wrapper that
+        executes the cpthook program to run each of the hook scripts
+        configured to be run for a hook type in a repository.
 
-    Configuration is managed through an ini-style file
-    (see CptHookConfig)"""
-
-    def __init__(self, config_file):
-        """Called with the filename of a cpthook configuration file"""
+        Configuration is managed through an ini-style file
+        (see CptHookConfig)"""
         self.config_file = config_file
         self.config = CptHookConfig(config_file)
         self.dry_run = False
