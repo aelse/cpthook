@@ -23,7 +23,7 @@ setup(
     license='BSD',
     py_modules=['cpthook'],
     scripts=['cpthook'],
-    version='1.0.1',
+    version='1.0.2',
     install_requires=[],
 
     description='Centrally manage hooks for git repositories',
