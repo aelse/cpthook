@@ -24,6 +24,7 @@ setup(
     py_modules=['cpthook'],
     scripts=['cpthook'],
     version='1.0.2',
+    data_files=['update-cpthook.sh'],
     install_requires=[],
 
     description='Centrally manage hooks for git repositories',
