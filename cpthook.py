@@ -175,7 +175,8 @@ class CptHookConfig(object):
                         values = parser.get(section, option).split()
                         # Record repo names without a .git suffix
                         if option == 'members':
-                            values = [x.rstrip('.git') for x in values]
+                            values = [re.sub('\.git$', '', x)
+                                      for x in values]
                         logging.debug('{0} -> {1} -> {2}'.format(
                             section, option, values))
                         conf_repos[repo_group][option] = values
@@ -467,7 +468,7 @@ class CptHook(object):
                 # No hooks in repo, skip it
                 continue
 
-            repo_name = os.path.basename(repo).rstrip('.git')
+            repo_name = re.sub('\.git$', '', os.path.basename(repo))
             known_hooks = self.config.hooks_for_repo(repo_name).keys()
 
             for file_ in hook_files:
@@ -535,7 +536,7 @@ class CptHook(object):
             return -1
         # Work out the repository name from the current directory
         repo = os.path.basename(os.path.realpath(os.path.curdir))
-        repo = repo.rstrip('.git')
+        repo = re.sub('\.git$', '', repo)
 
         # Read stdin into a buffer to be replayed to each hook script.
         stdin = sys.stdin.read()
