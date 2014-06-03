@@ -169,7 +169,7 @@ class CptHookConfig(object):
             if section.startswith('repos '):
                 repo_group = re.sub('^repos\s+', '', section)
                 logging.debug('Found repo {0}'.format(repo_group))
-                conf_repos[repo_group] = {}
+                conf_repos[repo_group] = {'members': [], 'hooks': []}
                 for option in ['members', 'hooks']:
                     try:
                         values = parser.get(section, option).split()
