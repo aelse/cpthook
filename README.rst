@@ -132,3 +132,11 @@ A cpthook configuration file uses the python `ConfigParser` syntax.
     # eg. hooks.d/pre-receive/validate_style.sh
     pre-receive = validate_style.sh
     post-receive = trigger_build.sh
+
+    # There is also a special global repo group. Hooks listed in the
+    # global repo group are applied to all known repos.
+    [repos *]
+    hooks = global_hooks
+
+    [hooks global_hooks]
+    post-receive = post-receive-email.sh
