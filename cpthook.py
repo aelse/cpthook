@@ -251,6 +251,12 @@ class CptHookConfig(object):
             if repo in group_members:
                 if repo not in membership:
                     membership.append(repo_group)
+
+        # Add global repo group if repo is in any other group
+        # and the global membership group exists
+        if membership and '*' in self.repo_groups:
+            membership.append('*')
+
         logging.debug('{0} is a member of {1}'.format(repo, membership))
         return membership
 
