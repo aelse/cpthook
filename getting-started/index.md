@@ -113,7 +113,7 @@ Now when I commit locally to this repository I should see the message
 output by `test-post-commit.sh`.
 
 Once this is working have a look at the full configuration example to
-see how you can make use of groups to simply applying the same hooks
+see how you can make use of groups to simplify applying the same hooks
 to many repositories.
 
 ## Full Configuration Example
